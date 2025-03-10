@@ -27,27 +27,6 @@
         overflow: hidden;
     }
 
-    /* Navigation Bar */
-    .navbar {
-        background: #003366;
-        color: white;
-        padding: 6px 15px;
-        font-size: 14px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .navbar .logo {
-        font-size: 16px;
-        font-weight: bold;
-    }
-
-    .navbar .menu a,
-    .navbar .logout a {
-        font-size: 13px;
-    }
-
     /* Main Dashboard Layout */
     .dashboard-container {
         display: flex;
@@ -55,15 +34,16 @@
         height: calc(100vh - 40px); /* Full height minus navbar */
     }
 
-    /* Sidebar Navigation (Reduced Width) */
+    /* Sidebar Navigation */
     .sidebar {
-        width: 180px;
+        width: 200px;
         background: #f1f1f1;
         padding: 15px;
         display: flex;
         flex-direction: column;
         gap: 10px;
         overflow-y: auto;
+        transition: all 0.3s ease;
     }
 
     .sidebar button {
@@ -82,21 +62,83 @@
         background: #002244;
     }
 
-    /* Dashboard Content (Maximized Space) */
+    /* Dashboard Content */
     .dashboard-content {
         flex-grow: 1;
         display: flex;
         height: 100%;
-        width: calc(100% - 180px);
         padding: 10px;
+        transition: all 0.3s ease;
     }
 
-    /* Full-Screen Power BI iframe */
+    /* Power BI Dashboard iframe */
     #dashboardFrame {
         width: 100%;
-        height: 100vh; /* Takes up full height of the viewport */
+        height: 100vh;
         border: none;
-        display: block; /* Ensures it’s visible */
+        display: block;
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 1024px) { /* Tablets */
+        .sidebar {
+            width: 180px;
+        }
+
+        .sidebar button {
+            font-size: 13px;
+            padding: 8px;
+        }
+
+        .dashboard-content {
+            width: calc(100% - 180px);
+        }
+    }
+
+    @media screen and (max-width: 768px) { /* Small Tablets & Large Phones */
+        .sidebar {
+            width: 150px;
+        }
+
+        .sidebar button {
+            font-size: 12px;
+            padding: 8px;
+        }
+
+        .dashboard-content {
+            width: calc(100% - 150px);
+        }
+    }
+
+    @media screen and (max-width: 576px) { /* Mobile View */
+        .dashboard-container {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            height: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: row;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .sidebar button {
+            font-size: 12px;
+            padding: 8px;
+            flex: 1;
+        }
+
+        .dashboard-content {
+            width: 100%;
+            height: calc(100vh - 60px);
+        }
+
+        #dashboardFrame {
+            height: 85vh;
+        }
     }
 </style>
 
