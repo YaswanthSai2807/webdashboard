@@ -1,8 +1,8 @@
 DB_CONFIG = {
-    "host": "localhost",
+    "host": "mysql.railway.internal",
     "user": "root",
-    "password": "lenovo@123",  # Set your MySQL password
-    "database": "ProductMonitoringDB",
+    "password": "VsoHqpXVSRhNxxSCEVpjZMFcvSFQmSGW",  # Set your MySQL password
+    "database": "railway",
 }
 
 SECRET_KEY = "your_secret_key"  # Change this for security
