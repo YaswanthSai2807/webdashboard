@@ -1,0 +1,155 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 300px;
+    margin: auto;
+}
+input, select, button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px;
+    width: 100%;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #003366;
+    color: white;
+    padding: 15px 20px;
+}
+.navbar .logo {
+    padding-left: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+.navbar .menu {
+    display: flex;
+    gap: 15px;
+}
+.navbar .menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 8px 12px;
+}
+.navbar .menu a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+.search-container {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 5px;
+    border-radius: 5px;
+}
+.search-container input {
+    border: none;
+    padding: 8px;
+    outline: none;
+}
+.search-container i {
+    padding: 5px;
+    color: #003366;
+}
+.notification {
+    position: relative;
+}
+.notification i {
+    font-size: 20px;
+    cursor: pointer;
+}
+.notification .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    padding: 3px 7px;
+    border-radius: 50%;
+}
+.content {
+    padding: 20px;
+}
+.section-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #003366;
+    border-bottom: 3px solid #003366;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+.logout {
+    padding: 8px 15px;
+    font-size: 14px;
+}
+.profile-img img{
+    border-radius: 50%;
+}
+.inbox-card {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: left;
+}
+
+.dashboard-title {
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 2px solid #003366;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.dashboard-card {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 15px;
+    min-height: 100px;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+}
+
+.dashboard-card:hover {
+    background-color: #e6f7ff;
+    transform: scale(1.05);
+}
+.col-md-3 a{
+    text-decoration: none;
+}
+footer{
+    background-color: blue;
+}
+footer h2,h1 {
+    text-align: right;
+    padding-right: 10px;
+    padding-top: 10px;
+    color: white;
+}
+footer p {
+    text-align: center;
+    padding-right: 10px;
+    padding-top: 10px;
+    color: white;
+}
+footer a{
+    text-decoration: none;
+    color: white;
+    padding: 10px;
+    align-content: end;
+    border-radius: 10px;
+}

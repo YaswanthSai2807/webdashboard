@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRAVV - Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<style>
+    /* General Reset */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    /* Body */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: aqua;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
+
+    /* Flash Messages */
+    .flash-messages {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        text-align: center;
+    }
+
+    .flash {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .flash.success {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .flash.danger {
+        background-color: #f44336;
+        color: white;
+    }
+
+    /* Main Container */
+    .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        max-width: 1200px;
+        padding: 20px;
+    }
+
+    /* Register Box */
+    .register-box {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+        width: 350px;
+        text-align: center;
+        z-index: 10;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .register-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Input Fields */
+    input,
+    select {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: none;
+        border-bottom: 2px solid #003366;
+        text-align: left;
+        outline: none;
+        background: transparent;
+        font-size: 16px;
+        color: #003366;
+    }
+
+    input:focus,
+    select:focus {
+        border-bottom: 2px solid #002244;
+    }
+
+    /* Align role selection horizontally */
+    .role-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 10px 0;
+    }
+
+    .role-container label {
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .role-container select {
+        flex: 1;
+        width: auto;
+    }
+
+    /* Button */
+    button {
+        background-color: #003366;
+        color: white;
+        border: none;
+        padding: 10px;
+        width: 100%;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #002244;
+    }
+
+    /* Forgot Password & Register Links */
+    .register-link {
+        padding-top: 10px;
+    }
+
+    .register-link a {
+        text-decoration: none;
+        color: #003366;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+
+    /* Quote Box */
+    .quote-box {
+        max-width: 500px;
+        padding: 30px;
+        font-size: 28px;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        border-radius: 15px;
+        opacity: 0;
+        transform: translateX(50px);
+        animation: fadeInRight 1s ease-out forwards;
+        margin-left: 50px;
+    }
+
+    /* Footer */
+    footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: #003366;
+        color: white;
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    .footer-content h2 {
+        font-size: 24px;
+        padding-bottom: 5px;
+    }
+
+    .footer-content p {
+        font-size: 14px;
+        padding-bottom: 5px;
+    }
+
+    .footer-content a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .social-links a {
+        color: white;
+        font-size: 18px;
+        margin: 0 10px;
+        display: inline-block;
+        text-decoration: none;
+        padding-top: 5px;
+    }
+
+    /* Animation */
+    @keyframes fadeInRight {
+        0% {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 1024px) {
+        .container {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .quote-box {
+            max-width: 90%;
+            font-size: 24px;
+            margin-left: 0;
+            margin-top: 20px;
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        .register-box {
+            width: 90%;
+            max-width: 350px;
+        }
+
+        .quote-box {
+            max-width: 90%;
+            font-size: 22px;
+            margin-left: 0;
+            margin-top: 20px;
+        }
+
+        footer {
+            font-size: 12px;
+            padding: 10px 0;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .register-box {
+            width: 100%;
+            padding: 20px;
+        }
+
+        .quote-box {
+            font-size: 20px;
+            padding: 20px;
+        }
+    }
+</style>
+
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        {% if category == 'danger' or category == 'error' %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}   
+
+    <div class="container">
+        <div class="register-box">
+            <h2>Welcome</h2>
+            <p class="register-text">Sign up to explore our features</p>
+            <form method="POST" action="{{ url_for('register') }}">
+                <input type="text" id="username" name="username" placeholder="Enter username" required>
+                <input type="password" id="password" name="password" placeholder="Enter password" required>
+                <input type="password" id="confirm-password" name="confirm-password" placeholder="Re-enter password"
+                    required>
+
+                <div class="role-container">
+                    <label for="role">Select Role:</label>
+                    <select id="role" name="role">
+                        <option value="manager">Manager</option>
+                        <option value="salesman">Salesman</option>
+                    </select>
+                </div>
+
+                <button type="submit">Register</button>
+            </form>
+            <p class="register-link">Already have an account? <a href="/">Sign in</a></p>
+        </div>
+
+        <div class="quote-box">
+            <p class="quote-text">"Data speaks louder when visualized. Transform insights, drive decisions."</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <h2>DRAVV</h2>
+            <p>Leading Innovation, Delivering Excellence</p>
+            <a href="https://www.draavtechnologies.com/" target="_blank">draavtechnologies.com</a>
+            <div class="social-links">
+                <a href="https://www.draavtechnologies.com/" class="fa fa-globe" target="_blank"></a>
+                <a href="#" class="fa fa-facebook" target="_blank"></a>
+                <a href="https://in.linkedin.com/company/draav-technologies-private-limited" class="fa fa-linkedin"
+                    target="_blank"></a>
+                <a href="https://wa.me/1XXXXXXXXXX" class="fa fa-whatsapp" target="_blank"></a>
+                <a href="mailto:draavtechnologies@gmail.com" class="fa fa-envelope" target="_blank"></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
