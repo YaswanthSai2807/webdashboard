@@ -153,3 +153,15 @@ footer a{
     align-content: end;
     border-radius: 10px;
 }
+.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 10px;
+}
+.tab-content iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}

@@ -68,7 +68,14 @@ async function getUserInfo() {
         window.location.href = "login.html"; // Redirect to login
     }
 }
-setTimeout(function() {
+setTimeout(function () {
     let alerts = document.querySelectorAll(".alert");
     alerts.forEach(alert => alert.style.display = "none");
-  }, 3000);
+}, 3000);
+
+function openTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.getElementById(tabId).classList.add('active');
+}

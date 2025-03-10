@@ -16,21 +16,6 @@ def get_db_connection():
 def home():
     return render_template("index.html")
 
-@app.route("/dashboard", methods=['GET'])
-def dashboard():
-    # Access session data correctly
-    username = session.get('username')
-    user_id=session.get('user_id')  
-    if not user_id:
-        return redirect(url_for('home'))  # Redirect to login page if no username in session
-    conn = get_db_connection()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT dashboard_link,dashboard_name FROM dashboards WHERE user_id=%s", (user_id,))
-    dashboard_data = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return render_template("dashboard.html",username=username, user_id=user_id, dashboard_data=dashboard_data)
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -62,7 +47,7 @@ def register():
             )
             conn.commit()
             flash("Registration successful!", "success")
-            return redirect(url_for("login"))  # Redirect to login page after successful registration
+            return redirect(url_for("home")) # Redirect to login page after successful registration
 
         except pymysql.Error as err:
             flash(f"Error: {str(err)}", "danger")
@@ -97,6 +82,53 @@ def login():
 def logout():
     session.clear()  # Clear the session data
     return redirect(url_for('home'))  # Redirect to the home page (login page)
+
+@app.route("/dashboard", methods=['GET'])
+def dashboard():
+    # Access session data correctly
+    username = session.get('username')
+    user_id=session.get('user_id')  
+    if not user_id:
+        return redirect(url_for('home'))  # Redirect to login page if no username in session
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT dashboard_link,dashboard_name FROM dashboards WHERE user_id=%s", (user_id,))
+    dashboard_data = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template("dashboard.html",username=username, user_id=user_id, dashboard_data=dashboard_data)
+
+@app.route('/dashboard_view')
+def dashboard_view():
+    username = session.get('username')
+    user_id = session.get('user_id')  
+
+    if not user_id:
+        return redirect(url_for('home'))  # Redirect to login page if not logged in
+
+    dashboard_name = request.args.get('dashboard_name')  # Get selected dashboard name
+
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    # Fetch all dashboards for sidebar
+    cursor.execute("SELECT dashboard_link, dashboard_name FROM dashboards WHERE user_id=%s", (user_id,))
+    dashboard_data = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    if not dashboard_data:
+        return "No dashboards found", 404
+
+    # If no dashboard is selected, default to the first one
+    selected_dashboard = next((d for d in dashboard_data if d["dashboard_name"] == dashboard_name), dashboard_data[0])
+
+    return render_template("dashboard_view.html", 
+                           username=username, 
+                           dashboard_data=dashboard_data, 
+                           selected_dashboard=selected_dashboard)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
