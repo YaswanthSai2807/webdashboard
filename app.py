@@ -62,7 +62,7 @@ def register():
             )
             conn.commit()
             flash("Registration successful!", "success")
-            return redirect(url_for("/"))  # Redirect to login page after successful registration
+            return redirect(url_for("home"))  # Redirect to login page after successful registration
 
         except pymysql.Error as err:
             flash(f"Error: {str(err)}", "danger")
