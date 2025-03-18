@@ -3,7 +3,6 @@ from flask_cors import CORS
 import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import users_db
-from mail import send_email, forgot_email
 from datetime import datetime
 from html.parser import HTMLParser
 
