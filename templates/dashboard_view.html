@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard View</title>
+    <title>Dashboard view</title>
 
     <!-- External Stylesheets -->
     <link rel="stylesheet" href="/static/style.css">
@@ -26,6 +26,26 @@
         height: 100vh;
         overflow: hidden;
     }
+    /* Search Input */
+    .search-container {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 5px;
+            border-radius: 20px;
+            width: 180px;
+        }
+
+        .search-container input {
+            border-radius: 20px;
+            outline: none;
+            width: 100%;
+            padding: 5px;
+        }
+
+        .search-container i {
+            color: #003366;
+        }
 
     /* Main Dashboard Layout */
     .dashboard-container {
@@ -145,18 +165,23 @@
 <body>
     <div class="navbar">
         <div class="logo">DRAAV</div>
-        <div class="menu"><a href="{{ url_for('dashboard') }}">Home</a></div>
+        <div class="menu">
+            <a href="{{ url_for('dashboard') }}">Home</a>
+            <a href="{{ url_for('inbox') }}">Inbox</a>
+            <a href="{{ url_for('support') }}">Support</a>
+            <a href="{{ url_for('sent') }}">Sent Mails</a>
+        </div>
+
         <div class="search-container">
             <input type="text" placeholder="Search...">
             <i class="fas fa-search"></i>
         </div>
-        <div class="notification">
-            <i class="fas fa-bell"></i>
-            <span class="badge">3</span>
-        </div>
-        <div class="logout"><a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a></div>
-    </div>
 
+        <div class="logout">
+            <a href="{{url_for('profile')}}"><i class='fas fa-user-circle' style='font-size:32px'></i></a>
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
     <div class="dashboard-container">
         <!-- Sidebar with Dashboard Buttons -->
         <div class="sidebar">

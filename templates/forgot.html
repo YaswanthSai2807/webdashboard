@@ -4,28 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DRAVV - Register</title>
+    <title>DRAVV - Forgot Password</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <style>
-    /* General Reset */
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: 'Montserrat', sans-serif;
+        font-family: Arial, sans-serif;
     }
 
-    /* Body */
     body {
-        font-family: Arial, sans-serif;
-        background-color: aqua;
         display: flex;
         flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+        background-color: #f5f5f5;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+        background: #003366;
+        color: white;
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-        min-height: 100vh;
+        flex-wrap: wrap;
+    }
+
+    .navbar .logo {
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+
+    .menu a {
+        color: white;
+        text-decoration: none;
+        font-size: 1rem;
     }
 
     /* Flash Messages */
@@ -65,10 +83,14 @@
         width: 100%;
         max-width: 1200px;
         padding: 20px;
+        height: calc(100vh - 60px);
+        /* Adjusted height to consider navbar & footer */
+        margin: auto;
     }
 
+
     /* Register Box */
-    .register-box {
+    .forogt-box {
         background: white;
         padding: 30px;
         border-radius: 10px;
@@ -79,7 +101,7 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .register-box:hover {
+    .forgot-box:hover {
         transform: translateY(-5px);
         box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.3);
     }
@@ -105,24 +127,6 @@
         border-bottom: 2px solid #002244;
     }
 
-    /* Align role selection horizontally */
-    .role-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin: 10px 0;
-    }
-
-    .role-container label {
-        font-weight: bold;
-        margin-right: 10px;
-    }
-
-    .role-container select {
-        flex: 1;
-        width: auto;
-    }
-
     /* Button */
     button {
         background-color: #003366;
@@ -140,34 +144,19 @@
     }
 
     /* Forgot Password & Register Links */
-    .register-link {
+    .forgot-link {
         padding-top: 10px;
     }
 
-    .register-link a {
+    .forgot-link a {
         text-decoration: none;
         color: #003366;
         font-size: 14px;
         font-weight: bold;
     }
 
-    .register-link a:hover {
+    .forogt-link a:hover {
         text-decoration: underline;
-    }
-
-    /* Quote Box */
-    .quote-box {
-        max-width: 500px;
-        padding: 30px;
-        font-size: 28px;
-        font-weight: bold;
-        color: black;
-        text-align: center;
-        border-radius: 15px;
-        opacity: 0;
-        transform: translateX(50px);
-        animation: fadeInRight 1s ease-out forwards;
-        margin-left: 50px;
     }
 
     /* Footer */
@@ -278,36 +267,26 @@
         {% endfor %}
     </div>
     {% endif %}
-    {% endwith %}   
+    {% endwith %}
 
-    <div class="container">
-        <div class="register-box">
-            <h2>Welcome</h2>
-            <p class="register-text">Sign up to explore our features</p>
-            <form method="POST" action="{{ url_for('register') }}">
-                <input type="text" id="username" name="username" placeholder="Enter username" required>
-                <input type="password" id="password" name="password" placeholder="Enter password" required>
-                <input type="password" id="confirm-password" name="confirm-password" placeholder="Re-enter password"
-                    required>
-
-                <div class="role-container">
-                    <label for="role">Select Role:</label>
-                    <select id="role" name="role">
-                        <option value="manager">Manager</option>
-                        <option value="salesman">Salesman</option>
-                    </select>
-                </div>
-
-                <button type="submit">Register</button>
-            </form>
-            <p class="register-link">Already have an account? <a href="/">Sign in</a></p>
-        </div>
-
-        <div class="quote-box">
-            <p class="quote-text">"Data speaks louder when visualized. Transform insights, drive decisions."</p>
+    <div class="navbar">
+        <div class="logo">DRAAV</div>
+        <div class="menu">
+            <a href="{{ url_for('home') }}">Home</a>
         </div>
     </div>
 
+    <div class="container">
+        <div class="register-box">
+            <h2>Forgot Password</h2>
+            <p class="forgot-text">Please enter username</p>
+            <form method="POST" action="{{ url_for('forgot_password') }}">
+                <input type="username" id="username" name="username" placeholder="Enter the Username" required>
+
+                <button type="submit"> Submit </button>
+            </form>
+        </div>
+    </div>
     <footer>
         <div class="footer-content">
             <h2>DRAVV</h2>
