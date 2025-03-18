@@ -230,12 +230,12 @@ def dashboard_view():
     conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-    # Fetch dashboards based on selected project or all if no project selected
+    # Fetch dashboards based on project or all non-project dashboards
     if project_id:
         cursor.execute("SELECT dashboard_link, dashboard_name FROM dashboards WHERE user_id=%s AND project_id=%s", 
                        (user_id, project_id))
     else:
-        cursor.execute("SELECT dashboard_link, dashboard_name FROM dashboards WHERE user_id=%s AND project_id=0", 
+        cursor.execute("SELECT dashboard_link, dashboard_name FROM dashboards WHERE user_id=%s AND (project_id IS NULL OR project_id=0)", 
                        (user_id,))
 
     dashboard_data = cursor.fetchall()
@@ -244,15 +244,24 @@ def dashboard_view():
     conn.close()
 
     if not dashboard_data:
-        return "No dashboards found", 404
+        return "No dashboards found", 404  # No dashboards exist for this user
 
-    # If no dashboard is selected, default to the first one
-    selected_dashboard = next((d for d in dashboard_data if d["dashboard_name"] == dashboard_name), dashboard_data[0])
+    # Find the selected dashboard if specified
+    selected_dashboard = next((d for d in dashboard_data if d["dashboard_name"] == dashboard_name), None)
+
+    # If a `dashboard_name` was given but not found, return an error instead of defaulting
+    if dashboard_name and not selected_dashboard:
+        return "Dashboard not found", 404
+
+    # If no dashboard is selected, use the first available one
+    if not selected_dashboard:
+        selected_dashboard = dashboard_data[0]
 
     return render_template("dashboard_view.html", 
                            username=username, 
                            dashboard_data=dashboard_data, 
                            selected_dashboard=selected_dashboard)
+
 
 @app.route('/support')
 def support():
