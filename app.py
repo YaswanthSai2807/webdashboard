@@ -2,15 +2,28 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for, f
 from flask_cors import CORS
 import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
-from config import DB_CONFIG, SECRET_KEY
+from config import users_db
+from mail import send_email, forgot_email
+from datetime import datetime
+from html.parser import HTMLParser
 
 app = Flask(__name__)
 CORS(app)
 
-app.secret_key = SECRET_KEY  # Needed for flash messages
+app.secret_key = "SECRET_KEY"
 
 def get_db_connection():
-    return pymysql.connect(**DB_CONFIG)
+    return pymysql.connect(**users_db )
+
+def html_to_text(html_string):
+    text = ""
+    class TextExtractor(HTMLParser):
+        def handle_data(self, data):
+            nonlocal text  # Access the outer scope 'text' variable
+            text += data
+    parser = TextExtractor()
+    parser.feed(html_string)
+    return text
 
 @app.route("/")
 def home():
@@ -31,7 +44,6 @@ def register():
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
-            # Check if the username already exists
             cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
             existing_user = cursor.fetchone()
 
@@ -39,19 +51,14 @@ def register():
                 flash("User already exists. Kindly login.", "danger")
                 return redirect(url_for("register"))
 
-            # Insert new user
             hashed_password = generate_password_hash(password)
-            cursor.execute(
-                "INSERT INTO users (username, password, role) VALUES (%s, %s, %s)",
-                (username, hashed_password, role),
-            )
+            cursor.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, %s)", (username, hashed_password, role))
             conn.commit()
             flash("Registration successful!", "success")
-            return redirect(url_for("login"))  # Redirect to login page after successful registration
+            return redirect(url_for("login"))
 
         except pymysql.Error as err:
             flash(f"Error: {str(err)}", "danger")
-            return redirect(url_for("register"))
         finally:
             cursor.close()
             conn.close()
@@ -62,41 +69,153 @@ def register():
 def login():
     username = request.form.get("username")
     password = request.form.get("password")
+    
+    if not username or not password:
+        flash("Enter the username and password", "danger")
+        return redirect(url_for('login'))
 
     conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT id, password, role FROM users WHERE username=%s", (username,))
+    cursor.execute("SELECT id, password, role, is_temporary_password FROM users WHERE username=%s", (username,))
     user = cursor.fetchone()
     cursor.close()
     conn.close()
-    session['user_id']=user['id']
+
     if user and check_password_hash(user["password"], password):
-        flash("Login successful!", "success") 
-        session["username"] = username  # Store username in session
-        return redirect(url_for('dashboard'))  # No need to pass username in URL
-    
-    flash("Invalid credentials!", "danger") 
-    return redirect(url_for('home'))
+        session["user_id"] = user["id"]
+        session["username"] = username
+        session["password"] = password
+
+        if user["is_temporary_password"]:
+            flash("You must update your password before accessing the portal.", "warning")
+            return redirect(url_for("change_password"))  
+
+        flash("Login successful!", "success")
+        return redirect(url_for("dashboard"))
+
+    flash("Invalid credentials!", "danger")
+    return redirect(url_for("home"))
 
 @app.route('/logout')
 def logout():
-    session.clear()  # Clear the session data
-    return redirect(url_for('home'))  # Redirect to the home page (login page)
+    session.clear()
+    return redirect(url_for('home'))
+
+@app.route("/change_password", methods=["GET", "POST"])
+def change_password():
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+
+    username = session["username"]
+    temp_password = session["password"]
+
+    if request.method == "POST":
+        current_password = request.form.get("current-password")
+        new_password = request.form.get("new-password")
+        confirm_password = request.form.get("confirm-new-password")
+        role = request.form.get("role")
+
+        if current_password != temp_password:
+            flash("Entered Current Password is Invalid", "danger")
+            return redirect(url_for("change_password"))
+
+        if new_password != confirm_password:
+            flash("Passwords do not match.", "danger")
+            return redirect(url_for("change_password"))
+
+        hashed_password = generate_password_hash(new_password)
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("UPDATE users SET password=%s, is_temporary_password=%s, role=%s WHERE id=%s", (hashed_password, False, role, session["user_id"]))
+            conn.commit()
+            flash("Password updated successfully, Kindly Login", "success")
+            return redirect(url_for("home"))
+
+        except pymysql.Error as err:
+            flash(f"Error updating password: {str(err)}", "danger")
+        finally:
+            cursor.close()
+            conn.close()
+
+    return render_template("change_password.html", username=username)
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        username = request.form.get('username')
+
+        if not username:
+            flash("Please enter a username.", "danger")
+            return redirect(url_for('forgot_password'))
+
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute("SELECT username FROM users WHERE username = %s", (username,))
+            user = cursor.fetchone()
+            conn.close()
+
+            if user:
+                support_email = "saiyaswanthabbaraju@gmail.com"
+                subject = f"Password Reset Request for {username}"
+                body = f"User '{username}' has requested a password reset."
+
+                if forgot_email(support_email, subject, body):
+                    flash("Your request has been sent to the support team.", "success")
+                else:
+                    flash("Failed to send email. Please try again later.", "danger")
+            else:
+                flash("No username found.", "danger")
+
+        except Exception as e:
+            flash("An error occurred. Please try again later.", "danger")
+            print(f"Error: {str(e)}")
+
+        return redirect(url_for('forgot_password'))
+
+    return render_template('forgot.html')
+@app.route("/profile")
+def profile():
+    username = session.get('username', 'Guest')  # Handling case where user is not logged in
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Formatting timestamp
+    return render_template("profile.html", username=username, timestamp=timestamp)
 
 @app.route("/dashboard", methods=['GET'])
 def dashboard():
-    # Access session data correctly
     username = session.get('username')
-    user_id=session.get('user_id')  
+    user_id = session.get('user_id')
+    
     if not user_id:
-        return redirect(url_for('home'))  # Redirect to login page if no username in session
+        return redirect(url_for('home'))  # Redirect if not logged in
+    
     conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT dashboard_link,dashboard_name FROM dashboards WHERE user_id=%s", (user_id,))
-    dashboard_data = cursor.fetchall()
+
+    # Fetch all projects assigned to the user
+    cursor.execute("SELECT project_id, project_name FROM projects WHERE user_id=%s", (user_id,))
+    projects = cursor.fetchall()
+
+    # Fetch dashboards based on project association
+    cursor.execute("SELECT dashboard_name, dashboard_link, project_id FROM dashboards WHERE user_id=%s", (user_id,))
+    dashboards = cursor.fetchall()
+
+    # Count unread emails
+    cursor.execute("SELECT count(*) AS unread FROM user_emails WHERE is_read=0 AND user_id=%s", (user_id,))
+    mails = cursor.fetchone()["unread"]
+
     cursor.close()
     conn.close()
-    return render_template("dashboard.html",username=username, user_id=user_id, dashboard_data=dashboard_data)
+
+    return render_template(
+        "dashboard.html",
+        username=username,
+        user_id=user_id,
+        projects=projects,
+        dashboards=dashboards,
+        mails=mails
+    )
 
 @app.route('/dashboard_view')
 def dashboard_view():
@@ -107,12 +226,19 @@ def dashboard_view():
         return redirect(url_for('home'))  # Redirect to login page if not logged in
 
     dashboard_name = request.args.get('dashboard_name')  # Get selected dashboard name
+    project_id = request.args.get('project_id')  # Get selected project ID (if any)
 
     conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-    # Fetch all dashboards for sidebar
-    cursor.execute("SELECT dashboard_link, dashboard_name FROM dashboards WHERE user_id=%s", (user_id,))
+    # Fetch dashboards based on selected project or all if no project selected
+    if project_id:
+        cursor.execute("SELECT dashboard_link, dashboard_name FROM dashboards WHERE user_id=%s AND project_id=%s", 
+                       (user_id, project_id))
+    else:
+        cursor.execute("SELECT dashboard_link, dashboard_name FROM dashboards WHERE user_id=%s AND project_id=0", 
+                       (user_id,))
+
     dashboard_data = cursor.fetchall()
 
     cursor.close()
@@ -129,6 +255,100 @@ def dashboard_view():
                            dashboard_data=dashboard_data, 
                            selected_dashboard=selected_dashboard)
 
+@app.route('/support')
+def support():
+    return render_template("support.html")
+
+@app.route('/send-email', methods=['POST'])
+def handle_email():
+    """Handle email storing request without sending."""
+    if 'username' not in session:
+        flash("Please log in to send emails.", "danger")
+        return redirect(url_for("login"))
+    
+    user_id = session['user_id']
+    username = session['username']
+    to_email = "saiabbaraju2807@gmail.com"  # Example recipient email
+    subject = request.form['subject']
+    body = request.form['message']
+
+    # Store email in the database
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        message_body = html_to_text(body)  # Convert HTML to plain text if necessary
+        cursor.execute(
+            "INSERT INTO support_emails (user_id, username, subject, message) VALUES (%s, %s, %s, %s)",
+            (user_id, username, subject, message_body)
+        )
+        conn.commit()
+        flash("E-Mail sent successfully!", "success")
+
+        # Uncomment the following lines to enable email sending in the future
+        """
+        if send_email(to_email, f"{username}: {subject}", body):
+            flash("Email sent successfully!", "success")
+        else:
+            flash("Failed to send email. Please authenticate first.", "danger")
+        """
+
+    except pymysql.Error as err:
+        flash(f"Error: {str(err)}", "danger")
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for("dashboard"))
+
+@app.route('/sent')
+def sent():
+    user_id = session.get('user_id')  
+
+    if not user_id:
+        return redirect(url_for('sent'))
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    # Fetch all dashboards for sidebar
+    cursor.execute("SELECT subject, message,sent_at FROM support_emails WHERE user_id=%s ORDER BY sent_at DESC", (user_id,))
+    sent_data = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    return render_template("sent.html", sent_data=sent_data)
+
+@app.route('/inbox')
+def inbox():
+    user_id = session.get('user_id')  
+    conn=get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM user_emails WHERE user_id=%s ORDER BY sent_at DESC",(user_id,))
+    inbox = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template("inbox.html", inbox=inbox)
+
+@app.route('/inbox/<int:email_id>')
+def view_email(email_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    # Fetch email details
+    cursor.execute("SELECT * FROM user_emails WHERE id = %s", (email_id,))
+    email = cursor.fetchone()
+
+    # Mark email as read
+    if email and not email['is_read']:
+        cursor.execute("UPDATE user_emails SET is_read = 1 WHERE id = %s", (email_id,))
+        conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    if email:
+        return render_template("email_detail.html", email=email)
+    else:
+        return "Email not found", 404
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
