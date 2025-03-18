@@ -1,4 +1,4 @@
-DB_CONFIG = {
+users_db = {
     "host": "mysql.railway.internal",
     "user": "root",
     "password": "VsoHqpXVSRhNxxSCEVpjZMFcvSFQmSGW",  # Set your MySQL password
