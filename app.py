@@ -152,19 +152,42 @@ def forgot_password():
         try:
             conn = get_db_connection()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
-            cursor.execute("SELECT username FROM users WHERE username = %s", (username,))
+            cursor.execute("SELECT id, username FROM users WHERE username = %s", (username,))
             user = cursor.fetchone()
+            cursor.close()
             conn.close()
 
             if user:
-                support_email = "saiyaswanthabbaraju@gmail.com"
+                user_id = user["id"]  # Extract user_id from the database
+                
                 subject = f"Password Reset Request for {username}"
-                body = f"User '{username}' has requested a password reset."
+                message_body = "Hi Support Team, I forgot my password. Kindly update my password."
 
-                if forgot_email(support_email, subject, body):
+                # Insert into support_emails table
+                conn = get_db_connection()
+                cursor = conn.cursor()
+                try:
+                    cursor.execute(
+                        "INSERT INTO support_emails (user_id, username, subject, message) VALUES (%s, %s, %s, %s)",
+                        (user_id, username, subject, message_body)
+                    )
+                    conn.commit()
                     flash("Your request has been sent to the support team.", "success")
-                else:
-                    flash("Failed to send email. Please try again later.", "danger")
+
+                    # Uncomment the following lines to enable email sending in the future
+                    """
+                    support_email = "saiyaswanthabbaraju@gmail.com"
+                    if forgot_email(support_email, subject, message_body):
+                        flash("Your request has been sent to the support team.", "success")
+                    else:
+                        flash("Failed to send email. Please try again later.", "danger")
+                    """
+
+                except pymysql.Error as err:
+                    flash(f"Database Error: {str(err)}", "danger")
+                finally:
+                    cursor.close()
+                    conn.close()
             else:
                 flash("No username found.", "danger")
 
@@ -175,6 +198,7 @@ def forgot_password():
         return redirect(url_for('forgot_password'))
 
     return render_template('forgot.html')
+
 @app.route("/profile")
 def profile():
     username = session.get('username', 'Guest')  # Handling case where user is not logged in
@@ -185,6 +209,7 @@ def profile():
 def dashboard():
     username = session.get('username')
     user_id = session.get('user_id')
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Formatting timestamp
     
     if not user_id:
         return redirect(url_for('home'))  # Redirect if not logged in
@@ -213,13 +238,15 @@ def dashboard():
         user_id=user_id,
         projects=projects,
         dashboards=dashboards,
-        mails=mails
+        mails=mails,
+        timestamp=timestamp
     )
 
 @app.route('/dashboard_view')
 def dashboard_view():
     username = session.get('username')
     user_id = session.get('user_id')  
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Formatting timestamp
 
     if not user_id:
         return redirect(url_for('home'))  # Redirect to login page if not logged in
@@ -260,12 +287,14 @@ def dashboard_view():
     return render_template("dashboard_view.html", 
                            username=username, 
                            dashboard_data=dashboard_data, 
-                           selected_dashboard=selected_dashboard)
+                           selected_dashboard=selected_dashboard, timestamp=timestamp)
 
 
 @app.route('/support')
 def support():
-    return render_template("support.html")
+    username = session.get('username')
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Formatting timestamp
+    return render_template("support.html",username=username, timestamp=timestamp)
 
 @app.route('/send-email', methods=['POST'])
 def handle_email():
@@ -310,6 +339,7 @@ def handle_email():
 
 @app.route('/sent')
 def sent():
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Formatting timestamp
     user_id = session.get('user_id')  
 
     if not user_id:
@@ -323,10 +353,11 @@ def sent():
 
     cursor.close()
     conn.close()
-    return render_template("sent.html", sent_data=sent_data)
+    return render_template("sent.html", sent_data=sent_data, timestamp=timestamp)
 
 @app.route('/inbox')
 def inbox():
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Formatting timestamp
     user_id = session.get('user_id')  
     conn=get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -334,10 +365,11 @@ def inbox():
     inbox = cursor.fetchall()
     cursor.close()
     conn.close()
-    return render_template("inbox.html", inbox=inbox)
+    return render_template("inbox.html", inbox=inbox, timestamp=timestamp)
 
 @app.route('/inbox/<int:email_id>')
 def view_email(email_id):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Formatting timestamp
     conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
 
@@ -354,9 +386,9 @@ def view_email(email_id):
     conn.close()
 
     if email:
-        return render_template("email_detail.html", email=email)
+        return render_template("email_detail.html", email=email, timestamp=timestamp)
     else:
         return "Email not found", 404
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True) 
