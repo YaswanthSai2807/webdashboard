@@ -26,35 +26,54 @@
         height: 100vh;
         overflow: hidden;
     }
-    /* Search Input */
-    .search-container {
-            display: flex;
-            align-items: center;
-            background: white;
-            padding: 5px;
-            border-radius: 20px;
-            width: 180px;
-        }
 
-        .search-container input {
-            border-radius: 20px;
-            outline: none;
-            width: 100%;
-            padding: 5px;
-        }
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #003366;
+        color: white;
+        padding: 10px 20px;
+    }
 
-        .search-container i {
-            color: #003366;
-        }
+    .logo {
+        font-size: 20px;
+        font-weight: bold;
+    }
 
-    /* Main Dashboard Layout */
+    .menu a {
+        color: white;
+        text-decoration: none;
+        margin: 0 10px;
+    }
+
+    .menu a:hover {
+        text-decoration: underline;
+    }
+
+    .profile-dropdown .dropdown-toggle {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+    }
+
+    .profile-dropdown .dropdown-menu {
+        right: 0;
+        left: auto;
+        min-width: 200px;
+    }
+
+    .profile-dropdown .dropdown-menu .dropdown-item {
+        font-size: 14px;
+    }
+
     .dashboard-container {
         display: flex;
         flex-grow: 1;
-        height: calc(100vh - 40px); /* Full height minus navbar */
+        height: calc(100vh - 40px);
     }
 
-    /* Sidebar Navigation */
     .sidebar {
         width: 200px;
         background: #f1f1f1;
@@ -63,7 +82,6 @@
         flex-direction: column;
         gap: 10px;
         overflow-y: auto;
-        transition: all 0.3s ease;
     }
 
     .sidebar button {
@@ -82,83 +100,17 @@
         background: #002244;
     }
 
-    /* Dashboard Content */
     .dashboard-content {
         flex-grow: 1;
         display: flex;
         height: 100%;
         padding: 10px;
-        transition: all 0.3s ease;
     }
 
-    /* Power BI Dashboard iframe */
     #dashboardFrame {
         width: 100%;
         height: 100vh;
         border: none;
-        display: block;
-    }
-
-    /* Responsive Design */
-    @media screen and (max-width: 1024px) { /* Tablets */
-        .sidebar {
-            width: 180px;
-        }
-
-        .sidebar button {
-            font-size: 13px;
-            padding: 8px;
-        }
-
-        .dashboard-content {
-            width: calc(100% - 180px);
-        }
-    }
-
-    @media screen and (max-width: 768px) { /* Small Tablets & Large Phones */
-        .sidebar {
-            width: 150px;
-        }
-
-        .sidebar button {
-            font-size: 12px;
-            padding: 8px;
-        }
-
-        .dashboard-content {
-            width: calc(100% - 150px);
-        }
-    }
-
-    @media screen and (max-width: 576px) { /* Mobile View */
-        .dashboard-container {
-            flex-direction: column;
-        }
-
-        .sidebar {
-            width: 100%;
-            height: auto;
-            padding: 10px;
-            display: flex;
-            flex-direction: row;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        .sidebar button {
-            font-size: 12px;
-            padding: 8px;
-            flex: 1;
-        }
-
-        .dashboard-content {
-            width: 100%;
-            height: calc(100vh - 60px);
-        }
-
-        #dashboardFrame {
-            height: 85vh;
-        }
     }
 </style>
 
@@ -172,18 +124,21 @@
             <a href="{{ url_for('sent') }}">Sent Mails</a>
         </div>
 
-        <div class="search-container">
-            <input type="text" placeholder="Search...">
-            <i class="fas fa-search"></i>
-        </div>
-
-        <div class="logout">
-            <a href="{{url_for('profile')}}"><i class='fas fa-user-circle' style='font-size:32px'></i></a>
-            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+        <div class="profile-dropdown dropdown">
+            <button class="dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="fas fa-user-circle" style="font-size:32px; color: white;"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                <li><a class="dropdown-item"><strong>Username:</strong> {{ username }}</a></li>
+                <li><a class="dropdown-item"><strong>Login Time:</strong> {{ timestamp }}</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
         </div>
     </div>
+
     <div class="dashboard-container">
-        <!-- Sidebar with Dashboard Buttons -->
         <div class="sidebar">
             {% for link in dashboard_data %}
             <button onclick="loadDashboard('{{ link.dashboard_name }}', '{{ link.dashboard_link }}')">
@@ -192,7 +147,6 @@
             {% endfor %}
         </div>
 
-        <!-- Main Dashboard Display -->
         <div class="dashboard-content">
             <iframe id="dashboardFrame" title="Dashboard" 
                 src="{{ selected_dashboard.dashboard_link }}" allowFullScreen>
@@ -207,6 +161,7 @@
         }
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

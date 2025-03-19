@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         /* Global Reset */
@@ -20,115 +21,115 @@
         }
 
         .navbar {
-        background: #003366;
-        color: white;
-        padding: 5px 15px;
-        gap: 2px;
-    }
+            background: #003366;
+            color: white;
+            padding: 5px 15px;
+            gap: 2px;
+        }
 
-    .navbar .logo {
-        font-size: 1.4rem;
-        font-weight: bold;
-    }
+        .navbar .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
 
-    .menu a {
-        color: white;
-        text-decoration: none;
-        font-size: 1rem;
-    }
+        .menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+        }
 
-    /* Search Input */
-    .search-container {
-        display: flex;
-        align-items: center;
-        background: white;
-        padding: 5px;
-        border-radius: 20px;
-        width: 180px;
-    }
+        /* Search Input */
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 5px;
+            border-radius: 20px;
+            width: 180px;
+        }
 
-    .search-container input {
-        border: none;
-        outline: none;
-        background: white;
-        padding: 5px;
-        border-radius: 20px;
-        width: 150px;
+        .search-container input {
+            border: none;
+            outline: none;
+            background: white;
+            padding: 5px;
+            border-radius: 20px;
+            width: 150px;
 
-    }
+        }
 
-    .search-container i {
-        color: #003366;
-    }
+        .search-container i {
+            color: #003366;
+        }
 
-    /* Notification Bell */
-    .notification {
-        position: relative;
-        cursor: pointer;
-    }
+        /* Notification Bell */
+        .notification {
+            position: relative;
+            cursor: pointer;
+        }
 
-    .notification .badge {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background: red;
-        color: white;
-        font-size: 0.8rem;
-        border-radius: 50%;
-        padding: 4px 6px;
-    }
+        .notification .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            font-size: 0.8rem;
+            border-radius: 50%;
+            padding: 4px 6px;
+        }
 
-    /* Flash Messages */
-    .flash-messages {
-        position: absolute;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80%;
-        text-align: center;
-    }
+        /* Flash Messages */
+        .flash-messages {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            text-align: center;
+        }
 
-    .flash {
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 5px;
-        text-align: center;
-        font-size: 16px;
-    }
+        .flash {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
 
-    .flash.success {
-        background-color: green;
-        color: white;
-    }
+        .flash.success {
+            background-color: green;
+            color: white;
+        }
 
-    .flash.danger {
-        background-color: #f44336;
-        color: white;
-    }
+        .flash.danger {
+            background-color: #f44336;
+            color: white;
+        }
 
-    /* Profile & Logout */
-    .logout {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }   
+        /* Profile & Logout */
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    .logout a {
-        text-decoration: none;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 5px;
-        font-weight: bold;
-    }
+        .logout a {
+            text-decoration: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
 
-    .logout .btn-danger {
-        font-size: 0.9rem;
-    }
+        .logout .btn-danger {
+            font-size: 0.9rem;
+        }
 
-    .menu {
-        display: flex;
-        gap: 30px;
-    }
+        .menu {
+            display: flex;
+            gap: 30px;
+        }
 
         .logout .btn-danger {
             font-size: 0.9rem;
@@ -216,6 +217,22 @@
             background: #65ebf5;
         }
 
+        .profile-dropdown .dropdown-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+        }
+
+        .profile-dropdown .dropdown-menu {
+            right: 0;
+            left: auto;
+            min-width: 200px;
+        }
+
+        .profile-dropdown .dropdown-menu .dropdown-item {
+            font-size: 14px;
+        }
 
         /* Responsive Design */
         @media screen and (max-width: 768px) {
@@ -309,9 +326,9 @@
         <div class="logo">DRAAV</div>
         <div class="menu">
             <a href="{{ url_for('dashboard') }}">Home</a>
-            <a href="{{ url_for('inbox') }}">Inbox</a>
+            <!-- <a href="{{ url_for('inbox') }}">Inbox</a>
             <a href="{{ url_for('support') }}">Support</a>
-            <a href="{{ url_for('sent') }}">Sent Mails</a>
+            <a href="{{ url_for('sent') }}">Sent Mails</a> -->
         </div>
 
         <div class="search-container">
@@ -319,9 +336,19 @@
             <i class="fas fa-search"></i>
         </div>
 
-        <div class="logout">
-            <a href="{{url_for('profile')}}"><i class='fas fa-user-circle' style='font-size:32px'></i></a>
-            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+        <div class="profile-dropdown dropdown">
+            <button class="dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="fas fa-user-circle" style="font-size:32px; color: white;"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                <li><a class="dropdown-item"><strong>Username:</strong> {{ username }}</a></li>
+                <li><a class="dropdown-item"><strong>Login Time:</strong> {{ timestamp }}</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
         </div>
     </div>
 
@@ -357,11 +384,12 @@
 
     <!-- Dashboard Content -->
     <div class="container mt-3">
-        
+
         <!-- Projects Section (Only if there are projects) -->
         {% if projects %}
         <h4 class="mt-4 dashboard-title">Projects</h4>
-        <p id="no-results" style="display: none; text-align: center; color: red; font-weight: bold;">No dashboards found</p>
+        <p id="no-results" style="display: none; text-align: center; color: red; font-weight: bold;">No dashboards found
+        </p>
         <div class="row">
             {% for project in projects %}
             <div class="col-12">
@@ -386,7 +414,8 @@
         <!-- Dashboard Section (For users without projects) -->
         {% if not projects %}
         <h4 class="mt-4 dashboard-title">Dashboards</h4>
-        <p id="no-results" style="display: none; text-align: center; color: red; font-weight: bold;">No dashboards found</p>
+        <p id="no-results" style="display: none; text-align: center; color: red; font-weight: bold;">No dashboards found
+        </p>
         <hr class="line">
         <div class="row">
             {% for dashboard in dashboards %}
@@ -405,7 +434,7 @@
 </body>
 <script>
     // Automatically hide flash messages after 5 seconds
-    setTimeout(function() {
+    setTimeout(function () {
         let alerts = document.querySelectorAll(".alert");
         alerts.forEach(alert => {
             alert.style.transition = "opacity 1s";
@@ -415,7 +444,7 @@
     }, 5000); // 5 seconds
 </script>
 <script>
-    document.getElementById("search-box").addEventListener("keyup", function() {
+    document.getElementById("search-box").addEventListener("keyup", function () {
         let query = this.value.toLowerCase();
         let dashboards = document.querySelectorAll(".dashboard-card");
         let noResultsMessage = document.getElementById("no-results");
@@ -435,6 +464,10 @@
         // Show 'No Dashboards Found' message if none are visible
         noResultsMessage.style.display = found ? "none" : "block";
     });
+    function loadDashboard(name, link) {
+        document.getElementById("dashboardFrame").src = link;
+        window.history.pushState({}, "", "/dashboard_view?dashboard_name=" + encodeURIComponent(name));
+    }
 </script>
 
 </html>
