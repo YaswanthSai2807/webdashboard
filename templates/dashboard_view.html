@@ -112,6 +112,33 @@
         height: 100vh;
         border: none;
     }
+
+    @media (max-width: 768px) {
+        .dashboard-container {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            flex-direction: row;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            padding: 10px;
+        }
+
+        .sidebar button {
+            flex: 1;
+            min-width: fit-content;
+            max-width: fit-content;
+            text-align: center;
+        }
+
+        .dashboard-content {
+            flex-grow: 1;
+            height: calc(80vh - 80px);
+        }
+    }
 </style>
 
 <body>
@@ -132,7 +159,9 @@
             <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                 <li><a class="dropdown-item"><strong>Username:</strong> {{ username }}</a></li>
                 <li><a class="dropdown-item"><strong>Login Time:</strong> {{ timestamp }}</a></li>
-                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
                 <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">Logout</a></li>
             </ul>
         </div>
@@ -148,8 +177,7 @@
         </div>
 
         <div class="dashboard-content">
-            <iframe id="dashboardFrame" title="Dashboard" 
-                src="{{ selected_dashboard.dashboard_link }}" allowFullScreen>
+            <iframe id="dashboardFrame" title="Dashboard" src="{{ selected_dashboard.dashboard_link }}" allowFullScreen>
             </iframe>
         </div>
     </div>
