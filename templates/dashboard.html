@@ -280,15 +280,43 @@
             }
 
             .search-container {
-                width: 100%;
-                margin-top: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 90%;
+                margin: 10px auto;
             }
 
-            .dashboard-card {
-                font-size: 1rem;
+            .search-container input {
+                width: 100%;
+                padding: 12px;
+                border-radius: 25px;
+                border: none;
+                font-size: 16px;
+            }
+
+            .search-container button {
+                position: absolute;
+                right: 15px;
+                background: none;
+                border: none;
+                cursor: pointer;
             }
         }
 
+        .dashboard-card {
+            font-size: 1rem;
+        }
+
+        .inbox-card {
+            width: 80px;
+            height: 80px;
+            margin: 10px;
+        }
+        .flex-row{
+            display: flex;
+            flex-wrap: nowrap;
+        }
         @media screen and (max-width: 576px) {
             .navbar {
                 padding: 10px 5px;
@@ -353,8 +381,8 @@
     </div>
 
     <!-- My Inbox, Support, and Sent Emails Section -->
-    <div class="container mt-3 d-flex flex-row flex-wrap justify-content-center">
-        <div class="card inbox-card mx-2 p-3" style="width: 250px;">
+    <div class="container mt-3 d-flex flex-wrap justify-content-center">
+        <div class="card inbox-card mx-2 p-3 col-6 col-md-auto" style="width: 250px;">
             <a href="{{ url_for('inbox') }}">
                 <div class="text-center">
                     <h5 class="card-title">My Inbox</h5>
@@ -362,17 +390,17 @@
                 </div>
             </a>
         </div>
-
-        <div class="card inbox-card mx-2 p-3" style="width: 250px;">
+    
+        <div class="card inbox-card mx-2 p-3 col-6 col-md-auto" style="width: 250px;">
             <a href="{{ url_for('support') }}">
                 <div class="text-center">
                     <h5 class="card-title">Support</h5>
-                    <span class="detail">Get in touch with Support team</span>
+                    <span class="detail">Touch with Support team</span>
                 </div>
             </a>
         </div>
-
-        <div class="card inbox-card mx-2 p-3" style="width: 250px;">
+    
+        <div class="card inbox-card mx-2 p-3 col-6 col-md-auto" style="width: 250px;">
             <a href="{{ url_for('sent') }}">
                 <div class="text-center">
                     <h5 class="card-title">Sent E-mails</h5>
@@ -381,6 +409,7 @@
             </a>
         </div>
     </div>
+    
 
     <!-- Dashboard Content -->
     <div class="container mt-3">
