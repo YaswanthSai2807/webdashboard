@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from config import users_db
 from datetime import datetime
 from html.parser import HTMLParser
+from config import DB_CONFIG, SECRET_KEY
 
 app = Flask(__name__)
 CORS(app)
