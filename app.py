@@ -9,7 +9,7 @@ from html.parser import HTMLParser
 app = Flask(__name__)
 CORS(app)
 
-
+app.secret_key = SECRET_KEY
 
 def get_db_connection():
     return pymysql.connect(**users_db )
