@@ -1,12 +1,14 @@
-# DB_HOST=mysql.railway.internal
-DB_USER=root
-DB_PASSWORD=VsoHqpXVSRhNxxSCEVpjZMFcvSFQmSGW
-DB_NAME=railway
+# config.py
+import os
+from dotenv import load_dotenv
 
-# DB_HOST=localhost
-# DB_USER=root
-# DB_PASSWORD=lenovo@123
-# DB_NAME=productmonitoringdb
+load_dotenv()  # Load .env file
 
-# Secret Key
-SECRET_KEY=your_secret_key
+users_db = {
+    "host": os.getenv("DB_HOST"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "database": os.getenv("DB_NAME"),
+}
+
+SECRET_KEY = os.getenv("SECRET_KEY")
