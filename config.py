@@ -1,8 +1,12 @@
-users_db = {
-    "host": "mysql.railway.internal",
-    "user": "root",
-    "password": "VsoHqpXVSRhNxxSCEVpjZMFcvSFQmSGW",  # Set your MySQL password
-    "database": "railway",
-}
+# DB_HOST=mysql.railway.internal
+DB_USER=root
+DB_PASSWORD=VsoHqpXVSRhNxxSCEVpjZMFcvSFQmSGW
+DB_NAME=railway
 
-SECRET_KEY = "your_secret_key"  # Change this for securit
+# DB_HOST=localhost
+# DB_USER=root
+# DB_PASSWORD=lenovo@123
+# DB_NAME=productmonitoringdb
+
+# Secret Key
+SECRET_KEY=your_secret_key
