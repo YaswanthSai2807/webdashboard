@@ -5,12 +5,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from config import users_db
 from datetime import datetime
 from html.parser import HTMLParser
-from config import users_db, SECRET_KEY
 
 app = Flask(__name__)
 CORS(app)
 
-app.secret_key = SECRET_KEY
+app.secret_key = "SECRET_KEY"
 
 def get_db_connection():
     return pymysql.connect(**users_db )
@@ -340,37 +339,64 @@ def handle_email():
 
 @app.route('/sent')
 def sent():
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Formatting timestamp
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  
     user_id = session.get('user_id')  
 
     if not user_id:
-        return redirect(url_for('sent'))
+        return redirect(url_for('login'))  # Redirect to login instead of reloading sent page
+
     conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-    # Fetch all dashboards for sidebar
-    cursor.execute("SELECT subject, message,sent_at FROM support_emails WHERE user_id=%s ORDER BY sent_at DESC", (user_id,))
+    # Fetch sent emails
+    cursor.execute("SELECT id, subject, message, sent_at FROM support_emails WHERE user_id=%s ORDER BY sent_at DESC", (user_id,))
     sent_data = cursor.fetchall()
 
     cursor.close()
     conn.close()
+    
     return render_template("sent.html", sent_data=sent_data, timestamp=timestamp)
+
+@app.route('/sent/<int:sent_id>')
+def sent_email(sent_id):  # Match the route parameter
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    # Fetch email details
+    cursor.execute("SELECT * FROM support_emails WHERE id = %s", (sent_id,))
+    email = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if email:
+        return render_template("email_detail.html", email=email, timestamp=timestamp, is_sent=True)
+    else:
+        return "Email not found", 404
 
 @app.route('/inbox')
 def inbox():
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Formatting timestamp
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  
     user_id = session.get('user_id')  
-    conn=get_db_connection()
+
+    if not user_id:
+        return redirect(url_for('login'))  
+
+    conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM user_emails WHERE user_id=%s ORDER BY sent_at DESC",(user_id,))
-    inbox = cursor.fetchall()
+
+    cursor.execute("SELECT id, subject, message, sent_at, is_read FROM user_emails WHERE user_id=%s ORDER BY sent_at DESC", (user_id,))
+    inbox_data = cursor.fetchall()
+
     cursor.close()
     conn.close()
-    return render_template("inbox.html", inbox=inbox, timestamp=timestamp)
+
+    return render_template("inbox.html", inbox=inbox_data, timestamp=timestamp)
 
 @app.route('/inbox/<int:email_id>')
 def view_email(email_id):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Formatting timestamp
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  
     conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
 
@@ -378,7 +404,7 @@ def view_email(email_id):
     cursor.execute("SELECT * FROM user_emails WHERE id = %s", (email_id,))
     email = cursor.fetchone()
 
-    # Mark email as read
+    # Mark email as read if not already read
     if email and not email['is_read']:
         cursor.execute("UPDATE user_emails SET is_read = 1 WHERE id = %s", (email_id,))
         conn.commit()
@@ -387,9 +413,9 @@ def view_email(email_id):
     conn.close()
 
     if email:
-        return render_template("email_detail.html", email=email, timestamp=timestamp)
+        return render_template("email_detail.html", email=email, timestamp=timestamp, is_sent=False)
     else:
         return "Email not found", 404
-
+    
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True) 
