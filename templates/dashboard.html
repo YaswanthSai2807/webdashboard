@@ -250,6 +250,13 @@
             .dashboard-card {
                 font-size: 1rem;
             }
+
+            .dropdown-menu {
+                margin: 0 auto;
+                left: 50%;
+                align-items: center;
+                padding-left: 10px;
+            }
         }
 
         @media screen and (max-width: 576px) {
@@ -313,10 +320,12 @@
             height: 80px;
             margin: 10px;
         }
-        .flex-row{
+
+        .flex-row {
             display: flex;
             flex-wrap: nowrap;
         }
+
         @media screen and (max-width: 576px) {
             .navbar {
                 padding: 10px 5px;
@@ -385,12 +394,11 @@
         <div class="card inbox-card mx-2 p-3 col-6 col-md-auto" style="width: 250px;">
             <a href="{{ url_for('inbox') }}">
                 <div class="text-center">
-                    <h5 class="card-title">My Inbox</h5>
-                    <i class="fas fa-check-square"></i> {{mails}}
+                    <h5 class="card-title"><i class="fa fa-envelope"></i> Mail Box <i class="fas fa-check-square"></i> {{mails}}</h5>
                 </div>
             </a>
         </div>
-    
+
         <div class="card inbox-card mx-2 p-3 col-6 col-md-auto" style="width: 250px;">
             <a href="{{ url_for('support') }}">
                 <div class="text-center">
@@ -399,17 +407,9 @@
                 </div>
             </a>
         </div>
-    
-        <div class="card inbox-card mx-2 p-3 col-6 col-md-auto" style="width: 250px;">
-            <a href="{{ url_for('sent') }}">
-                <div class="text-center">
-                    <h5 class="card-title">Sent E-mails</h5>
-                    <span>Check the e-mails sent</span>
-                </div>
-            </a>
-        </div>
+
     </div>
-    
+
 
     <!-- Dashboard Content -->
     <div class="container mt-3">

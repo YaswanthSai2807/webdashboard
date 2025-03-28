@@ -11,6 +11,7 @@
 </head>
 
 <body>
+    <!-- Navbar -->
     <div class="navbar">
         <div class="logo">DRAAV</div>
         <div class="menu">
@@ -33,22 +34,41 @@
             <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                 <li><a class="dropdown-item"><strong>Username:</strong> {{ username }}</a></li>
                 <li><a class="dropdown-item"><strong>Login Time:</strong> {{ timestamp }}</a></li>
-                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
                 <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">Logout</a></li>
             </ul>
         </div>
     </div>
+
+    <!-- Email Details -->
     <div class="container mt-4">
         <h3>{{ email.subject }}</h3>
-        <p><strong>From:</strong> Support</p>
+        <p>
+            <strong>
+                {% if is_sent %}
+                To: Support
+                {% else %}
+                From: Support
+                {% endif %}
+            </strong>
+        </p>
         <p><strong>Sent At:</strong> {{ email.sent_at }}</p>
         <hr>
         <p>{{ email.message }}</p>
-        <a href="{{ url_for('inbox') }}" class="btn btn-primary mt-3">Back to Inbox</a>
+
+        <!-- Dynamic Back Button -->
+        <a href="{{ url_for('sent') if is_sent else url_for('inbox') }}" class="btn btn-primary mt-3">
+            Back to {{ 'Sent Mails' if is_sent else 'Inbox' }}
+        </a>
     </div>
+
 </body>
+
+<!-- Styles -->
 <style>
-     .navbar {
+    .navbar {
         background: #003366;
         color: white;
         padding: 5px 15px;
@@ -66,7 +86,6 @@
         font-size: 1rem;
     }
 
-    /* Search Input */
     .search-container {
         display: flex;
         align-items: center;
@@ -83,81 +102,12 @@
         padding: 5px;
         border-radius: 20px;
         width: 150px;
-
     }
 
     .search-container i {
         color: #003366;
     }
 
-    /* Notification Bell */
-    .notification {
-        position: relative;
-        cursor: pointer;
-    }
-
-    .notification .badge {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background: red;
-        color: white;
-        font-size: 0.8rem;
-        border-radius: 50%;
-        padding: 4px 6px;
-    }
-
-    /* Flash Messages */
-    .flash-messages {
-        position: absolute;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80%;
-        text-align: center;
-    }
-
-    .flash {
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 5px;
-        text-align: center;
-        font-size: 16px;
-    }
-
-    .flash.success {
-        background-color: green;
-        color: white;
-    }
-
-    .flash.danger {
-        background-color: #f44336;
-        color: white;
-    }
-
-    /* Profile & Logout */
-    .logout {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }   
-
-    .logout a {
-        text-decoration: none;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 5px;
-        font-weight: bold;
-    }
-
-    .logout .btn-danger {
-        font-size: 0.9rem;
-    }
-
-    .menu {
-        display: flex;
-        gap: 30px;
-    }
     .profile-dropdown .dropdown-toggle {
         background: none;
         border: none;
@@ -174,11 +124,10 @@
     .profile-dropdown .dropdown-menu .dropdown-item {
         font-size: 14px;
     }
-</style>
-<script>
-    function loadDashboard(name, link) {
-        document.getElementById("dashboardFrame").src = link;
-        window.history.pushState({}, "", "/dashboard_view?dashboard_name=" + encodeURIComponent(name));
+
+    .container {
+        max-width: 800px;
     }
-</script>
+</style>
+
 </html>

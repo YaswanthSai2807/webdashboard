@@ -36,40 +36,54 @@
             <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                 <li><a class="dropdown-item"><strong>Username:</strong> {{ username }}</a></li>
                 <li><a class="dropdown-item"><strong>Login Time:</strong> {{ timestamp }}</a></li>
-                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
                 <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">Logout</a></li>
             </ul>
         </div>
     </div>
+    <div class="container-fluid">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <a href="{{ url_for('inbox') }}" class="active"><i class="fas fa-inbox"></i> Inbox</a>
+            <a href="{{ url_for('sent') }}"><i class="fas fa-paper-plane"></i> Sent</a>
+        </div>
+        <div class="container mt-4">
+            <h3 class="text-center">Sent Emails</h3>
 
-    <div class="container mt-4">
-        <h3 class="text-center">Sent Emails</h3>
+            <table class="table table-bordered mt-3" id="emailTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Sent At</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if sent_data %}
+                    {% for email in sent_data %}
+                    <tr>
+                        <td>{{ email.sent_at }}</td>
+                        <td>{{ email.subject }}</td>
+                        <td>{{ email.message[:50] }}...</td>
+                        <td>
+                            <a href="{{ url_for('sent_email', sent_id=email.id) }}">View mail</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">No sent emails.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
 
-        <table class="table table-bordered mt-3" id="emailTable">
-            <thead class="table-dark">
-                <tr>
-                    <th>Subject</th>
-                    <th>Message</th>
-                    <th>Sent At</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if sent_data %}
-                {% for email in sent_data %}
-                <tr>
-                    <td>{{ email.subject }}</td>
-                    <td>{{ email.message }}</td>
-                    <td>{{ email.sent_at }}</td>
-                </tr>
-                {% endfor %}
-                {%else%}
-                <tr>
-                    <td colspan="3" class="text-center">No sent data</td>
-                </tr>
-                {%endif%}
-            </tbody>
-        </table>
     </div>
+
 </body>
 
 <style>
@@ -166,7 +180,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-    }   
+    }
 
     .logout a {
         text-decoration: none;
@@ -184,6 +198,7 @@
         display: flex;
         gap: 30px;
     }
+
     .profile-dropdown .dropdown-toggle {
         background: none;
         border: none;
@@ -199,6 +214,36 @@
 
     .profile-dropdown .dropdown-menu .dropdown-item {
         font-size: 14px;
+    }
+
+    .container-fluid {
+        display: flex;
+        height: 100vh;
+    }
+
+    .sidebar {
+        width: 250px;
+        background: #08c2e7;
+        color: black;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .sidebar a {
+        color: black;
+        text-decoration: none;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    .sidebar a:hover {
+        background: #65ebf5;
     }
 </style>
 <!-- JavaScript for Searching Emails -->
@@ -224,4 +269,5 @@
         window.history.pushState({}, "", "/dashboard_view?dashboard_name=" + encodeURIComponent(name));
     }
 </script>
+
 </html>

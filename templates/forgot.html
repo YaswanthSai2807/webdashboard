@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DRAAV - Forgot Password</title>
+    <title>DRAVV - Forgot Password</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
@@ -24,7 +24,6 @@
         background-color: #f5f5f5;
     }
 
-    /* Navigation Bar */
     .navbar {
         background: #003366;
         color: white;
@@ -32,7 +31,6 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex-wrap: wrap;
     }
 
     .navbar .logo {
@@ -46,7 +44,6 @@
         font-size: 1rem;
     }
 
-    /* Flash Messages */
     .flash-messages {
         position: absolute;
         top: 10px;
@@ -65,7 +62,7 @@
     }
 
     .flash.success {
-        background-color: #4CAF50;
+        background-color: green;
         color: white;
     }
 
@@ -74,31 +71,21 @@
         color: white;
     }
 
-    /* Main Container */
     .container {
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-wrap: wrap;
         width: 100%;
-        max-width: 1200px;
-        padding: 20px;
         height: calc(100vh - 60px);
-        /* Adjusted height to consider navbar & footer */
-        margin: auto;
     }
 
-
-    /* Register Box */
-    .forogt-box {
+    .forgot-box {
         background: white;
         padding: 30px;
         border-radius: 10px;
         box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
         width: 350px;
         text-align: center;
-        z-index: 10;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .forgot-box:hover {
@@ -106,28 +93,23 @@
         box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.3);
     }
 
-    /* Input Fields */
-    input,
-    select {
+    input {
         display: block;
         width: 100%;
         padding: 10px;
         margin: 10px 0;
         border: none;
         border-bottom: 2px solid #003366;
-        text-align: left;
         outline: none;
         background: transparent;
         font-size: 16px;
         color: #003366;
     }
 
-    input:focus,
-    select:focus {
+    input:focus {
         border-bottom: 2px solid #002244;
     }
 
-    /* Button */
     button {
         background-color: #003366;
         color: white;
@@ -143,11 +125,6 @@
         background-color: #002244;
     }
 
-    /* Forgot Password & Register Links */
-    .forgot-link {
-        padding-top: 10px;
-    }
-
     .forgot-link a {
         text-decoration: none;
         color: #003366;
@@ -155,11 +132,10 @@
         font-weight: bold;
     }
 
-    .forogt-link a:hover {
+    .forgot-link a:hover {
         text-decoration: underline;
     }
 
-    /* Footer */
     footer {
         position: fixed;
         bottom: 0;
@@ -169,91 +145,6 @@
         text-align: center;
         padding: 15px 0;
     }
-
-    .footer-content h2 {
-        font-size: 24px;
-        padding-bottom: 5px;
-    }
-
-    .footer-content p {
-        font-size: 14px;
-        padding-bottom: 5px;
-    }
-
-    .footer-content a {
-        color: white;
-        text-decoration: none;
-    }
-
-    .social-links a {
-        color: white;
-        font-size: 18px;
-        margin: 0 10px;
-        display: inline-block;
-        text-decoration: none;
-        padding-top: 5px;
-    }
-
-    /* Animation */
-    @keyframes fadeInRight {
-        0% {
-            opacity: 0;
-            transform: translateX(50px);
-        }
-
-        100% {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    /* Responsive Design */
-    @media screen and (max-width: 1024px) {
-        .container {
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .quote-box {
-            max-width: 90%;
-            font-size: 24px;
-            margin-left: 0;
-            margin-top: 20px;
-        }
-    }
-
-    @media screen and (max-width: 768px) {
-        .register-box {
-            width: 90%;
-            max-width: 350px;
-        }
-
-        .quote-box {
-            max-width: 90%;
-            font-size: 22px;
-            margin-left: 0;
-            margin-top: 20px;
-        }
-
-        footer {
-            font-size: 12px;
-            padding: 10px 0;
-        }
-    }
-
-    @media screen and (max-width: 480px) {
-        .register-box {
-            width: 100%;
-            padding: 20px;
-        }
-
-        .quote-box {
-            font-size: 20px;
-            padding: 20px;
-        }
-    }
 </style>
 
 <body>
@@ -261,32 +152,30 @@
     {% if messages %}
     <div class="flash-messages">
         {% for category, message in messages %}
-        {% if category == 'danger' or category == 'error' %}
-        <div class="flash {{ category }}">{{ message }}</div>
-        {% endif %}
+        <div class="flash {{ category }} fade-out">{{ message }}</div>
         {% endfor %}
     </div>
     {% endif %}
     {% endwith %}
 
     <div class="navbar">
-        <div class="logo">DRAAV</div>
+        <div class="logo">DRAVV</div>
         <div class="menu">
             <a href="{{ url_for('home') }}">Home</a>
         </div>
     </div>
 
     <div class="container">
-        <div class="register-box">
+        <div class="forgot-box">
             <h2>Forgot Password</h2>
-            <p class="forgot-text">Please enter username</p>
+            <p class="forgot-text">Please enter your username</p>
             <form method="POST" action="{{ url_for('forgot_password') }}">
-                <input type="username" id="username" name="username" placeholder="Enter the Username" required>
-
-                <button type="submit"> Submit </button>
+                <input type="text" id="username" name="username" placeholder="Enter the Username" required>
+                <button type="submit">Submit</button>
             </form>
         </div>
     </div>
+
     <footer>
         <div class="footer-content">
             <h2>DRAVV</h2>
@@ -294,16 +183,12 @@
             <a href="https://www.draavtechnologies.com/" target="_blank">draavtechnologies.com</a>
             <div class="social-links">
                 <a href="https://www.draavtechnologies.com/" class="fa fa-globe" target="_blank"></a>
-                <a href="#" class="fa fa-facebook" target="_blank"></a>
-                <a href="https://in.linkedin.com/company/draav-technologies-private-limited" class="fa fa-linkedin"
-                    target="_blank"></a>
-                <a href="https://wa.me/1XXXXXXXXXX" class="fa fa-whatsapp" target="_blank"></a>
+                <a href="https://in.linkedin.com/company/draav-technologies-private-limited" class="fa fa-linkedin" target="_blank"></a>
+                <a href="https://wa.me/1234567890" class="fa fa-whatsapp" target="_blank"></a>
                 <a href="mailto:draavtechnologies@gmail.com" class="fa fa-envelope" target="_blank"></a>
             </div>
         </div>
     </footer>
-
-    <script src="/static/script.js"></script>
 </body>
 
 </html>
